@@ -7,3 +7,8 @@ export const YOUTUBE_VIDEO_DETAILS_API =
   "https://youtube.googleapis.com/youtube/v3/videos?part=snippet,statistics&key=" +
   import.meta.env.VITE_GOOGLE_API_KEY +
   "&id=";
+
+export const YOUTUBE_SEARCH_API =
+  "https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=50&key=" +
+  import.meta.env.VITE_GOOGLE_API_KEY +
+  "&q=";
