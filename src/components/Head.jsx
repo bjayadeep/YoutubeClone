@@ -1,35 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { toggleMenu } from "../utils/appSlice"; 
+import { useDispatch, useSelector } from "react-redux";
+import { toggleMenu } from "../utils/appSlice";
+import { cacheResults } from "../utils/searchSlice"; 
 import { Link } from "react-router-dom";
 
 
-const YOUTUBE_SUGGESTION_API = "/api/suggestions&q=";
+const YOUTUBE_SUGGESTION_API = "/api/suggestions&q="; 
 
 const Head = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const searchCache = useSelector((store) => store.search);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
+    if (searchQuery && searchCache[searchQuery]) {
+      setSuggestions(searchCache[searchQuery]);
+      return; 
+    }
+
     const timer = setTimeout(() => {
       if (searchQuery) {
         getSearchSuggestions();
       } else {
-        setSuggestions([]); 
+        setSuggestions([]);
       }
-    }, 200);
+    }, 200); 
 
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+    return () => clearTimeout(timer); 
+  }, [searchQuery, searchCache]); 
 
   const getSearchSuggestions = async () => {
     try {
       const response = await fetch(YOUTUBE_SUGGESTION_API + encodeURIComponent(searchQuery));
       const text = await response.text();
 
-    
       const match = text.match(/h\((.*)\)/s);
 
       if (match && match[1]) {
@@ -38,14 +46,14 @@ const Head = () => {
         try {
           const parsedArray = JSON.parse(jsonString);
 
-          
           if (Array.isArray(parsedArray) && Array.isArray(parsedArray[1])) {
             const extractedSuggestions = parsedArray[1].map(item => item[0]);
             setSuggestions(extractedSuggestions);
-            //console.log("Parsed Suggestions:", extractedSuggestions);
+
+            dispatch(cacheResults({ [searchQuery]: extractedSuggestions }));
+
           } else {
             setSuggestions([]);
-            //console.warn("Parsed response structure unexpected. Debug info:", parsedArray);
           }
         } catch (parseError) {
           setSuggestions([]);
@@ -75,7 +83,7 @@ const Head = () => {
           alt="menu"
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/285px-Hamburger_icon.svg.png"
         />
-        <Link to="/"> 
+        <Link to="/">
           <img
             className="h-8 ml-4 cursor-pointer"
             alt="youtube-logo"
@@ -108,8 +116,8 @@ const Head = () => {
                   key={index}
                   className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
                   onClick={() => {
-                    setSearchQuery(suggestion); 
-                    setShowSuggestions(false); 
+                    setSearchQuery(suggestion);
+                    setShowSuggestions(false);
                   }}
                 >
                   <span className="mr-2">🔍</span>
