@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { YOUTUBE_VIDEOS_API } from "../utils/contants";
-import VideoCard from "./VideoCard";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { YOUTUBE_VIDEOS_API } from '../utils/contants'; 
+import VideoCard from './VideoCard'; 
 
 const VideoContainer = () => {
   const [videos, setVideos] = useState([]);
@@ -15,19 +14,23 @@ const VideoContainer = () => {
       const data = await fetch(YOUTUBE_VIDEOS_API);
       const json = await data.json();
 
-      setVideos(json.items);
+      if (json.items) {
+        setVideos(json.items);
+      }
     } catch (error) {
       console.error("Failed to fetch YouTube videos:", error);
     }
   };
 
   return (
-    <div className="flex flex-wrap">
-      {videos.map((video) => (
-        <Link key={video.id} to={"/watch?v=" + video.id}>
-          <VideoCard info={video} />
-        </Link>
-      ))}
+    <div className='flex flex-wrap justify-center md:justify-start pt-2'>
+      {videos.length > 0 ? (
+        videos.map(video => (
+          <VideoCard key={video.id.videoId || video.id} info={video} />
+        ))
+      ) : (
+        <div className="text-center w-full mt-20 text-gray-500">Loading videos...</div>
+      )}
     </div>
   );
 };

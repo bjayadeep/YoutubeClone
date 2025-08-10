@@ -1,66 +1,90 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { toggleMenu } from "../utils/appSlice";
-import { YOUTUBE_SEARCH_API } from "../utils/contants";
+import { toggleMenu } from "../utils/appSlice"; 
+import { Link } from "react-router-dom";
+
+
+const YOUTUBE_SUGGESTION_API = "/api/suggestions&q=";
 
 const Head = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchQuery) {
         getSearchSuggestions();
       } else {
-        setSuggestions([]);
+        setSuggestions([]); 
       }
-    }, 300);
+    }, 200);
 
-    return () => {
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, [searchQuery]);
 
   const getSearchSuggestions = async () => {
     try {
-      const data = await fetch(YOUTUBE_SEARCH_API + searchQuery);
-      const json = await data.json();
+      const response = await fetch(YOUTUBE_SUGGESTION_API + encodeURIComponent(searchQuery));
+      const text = await response.text();
 
-      const videoTitles = json.items.map((item) => item.snippet.title);
+    
+      const match = text.match(/h\((.*)\)/s);
 
-      const uniqueSuggestions = [...new Set(videoTitles)];
-      setSuggestions(uniqueSuggestions);
+      if (match && match[1]) {
+        const jsonString = match[1];
+
+        try {
+          const parsedArray = JSON.parse(jsonString);
+
+          
+          if (Array.isArray(parsedArray) && Array.isArray(parsedArray[1])) {
+            const extractedSuggestions = parsedArray[1].map(item => item[0]);
+            setSuggestions(extractedSuggestions);
+            //console.log("Parsed Suggestions:", extractedSuggestions);
+          } else {
+            setSuggestions([]);
+            //console.warn("Parsed response structure unexpected. Debug info:", parsedArray);
+          }
+        } catch (parseError) {
+          setSuggestions([]);
+          console.error("JSON parsing failed for string:", jsonString, "Error:", parseError);
+        }
+      } else {
+        setSuggestions([]);
+        console.error("Could not extract main array content from response text using regex.", text);
+      }
     } catch (error) {
-      console.error("Failed to fetch search suggestions:", error);
+      console.error("Failed to fetch search suggestions (Network or unexpected error):", error);
       setSuggestions([]);
     }
   };
-
-  const dispatch = useDispatch();
 
   const toggleMenuHandler = () => {
     dispatch(toggleMenu());
   };
 
   return (
-    <div className="flex justify-between items-center p-4 m-2 shadow-lg bg-white rounded-lg">
-      {/* Left section*/}
+    <div className="flex justify-between items-center p-4 shadow-lg bg-white rounded-none fixed top-0 left-0 right-0 w-full z-[1000]">
+      {/* Left */}
       <div className="flex items-center">
         <img
-          onClick={() => toggleMenuHandler()}
+          onClick={toggleMenuHandler}
           className="h-8 cursor-pointer"
           alt="menu"
-          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAYFBMVEX///8AAADPz89LS0uWlpb39/eCgoKQkJCxsbH29vZiYmI4ODh0dHTX19empqbFxcXr6+sQEBDh4eEbGxu7u7s0NDR6enpXV1egoKDJyclvb28ODg6IiIhcXFwfHx8ZGRnwNjATAAACZUlEQVR4nO3dCW7CMBCFYRdIw75vbSm9/y2rqKgUVRo72NJoxv93gveUkGBj7BAAAAAAAAAAAAAAAAAAoAKrdjq0Y9qu+tVbH1/sOa7TC7baYZ/UJvZrZtpJnzZrkgputHNm2KRUPGinzHKIF3zVzpjpNVZwq50w2zbScKodMNtULjjRzlfARGw41o5XwFhsONeOV8BcbGj3ZX83Extqpyui8oY77XQFXMWGJ+14BZzEhlbHTX/JY6iBdrwCFmJDD48auWBYaufLtow0NP803cUKhoV2xEyRT6H9+zR6j3bO2ikznFMKhrDSzvm05GnhxuYgap40l3izHlmbcpuNekx53y7kdmDHts/lAwAAAAAAAAAAxjRvy5Edy7e+P1zsh9q/JfU23PfoN7hqx33KdZBa0O5i9ugy9h+f2jkzfKYUfNdOmeU9XtD6Sm95lXfwsFhfXqofwkU7YLZLpKF2vgLkgnYXC93Jy4bsvgrv5JeivS9r/w3Fhh/a8QrYiA210xVR+TX0/zn0/yz1/z708KiRC1bwvdT+2CI6JeV+fFjBGL+CeRrLT5vEubYK5kuD/znvjvffLQAAAAAAAAAAgCHO94myt9fXoddeXxOj+7XFFkD/srtsKHHPPff7Jrrf+9L//qVf2hEzRfegtX2PdmL3qXa+AuSC/vfz9r8nu/999a3v5t2Rn6ba6YqovKH/c2ZsDpseyWcFWV/l3ZFXettfqh/9I7D7c9cqODvP/H+7EhazW5tke5RwhmVoLI+Bk84h9X+WbLA7hko9DzhUcKZzx/m53AAAAAAAAAAAAAAAAABg0zfn21Nf0tdOJAAAAABJRU5ErkJggg=="
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/285px-Hamburger_icon.svg.png"
         />
-        <img
-          className="h-8 ml-4 cursor-pointer"
-          alt="youtube-logo"
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/2560px-Logo_of_YouTube_%282015-2017%29.svg.png"
-        />
+        <Link to="/"> 
+          <img
+            className="h-8 ml-4 cursor-pointer"
+            alt="youtube-logo"
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Logo_of_YouTube_%282015-2017%29.svg/2560px-Logo_of_YouTube_%282015-2017%29.svg.png"
+          />
+        </Link>
       </div>
 
-      {/* Middle section*/}
+      {/* Middle */}
       <div className="flex items-center w-1/2 relative">
         <input
           className="w-full p-2 border border-gray-400 rounded-l-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -75,17 +99,17 @@ const Head = () => {
           🔍
         </button>
 
-        {/*dropdown */}
+        {/* Search dropdown */}
         {showSuggestions && suggestions.length > 0 && (
           <div className="absolute top-full mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-20">
-            <ul>
-              {suggestions.map((suggestion, index) => (
+            <ul className="max-h-80 overflow-y-auto">
+              {suggestions.slice(0, 10).map((suggestion, index) => (
                 <li
                   key={index}
                   className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
                   onClick={() => {
-                    setSearchQuery(suggestion);
-                    setShowSuggestions(false);
+                    setSearchQuery(suggestion); 
+                    setShowSuggestions(false); 
                   }}
                 >
                   <span className="mr-2">🔍</span>
@@ -97,7 +121,7 @@ const Head = () => {
         )}
       </div>
 
-      {/* Right section*/}
+      {/* Right */}
       <div className="flex items-center">
         <img
           className="h-8 cursor-pointer"

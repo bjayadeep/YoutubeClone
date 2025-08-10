@@ -1,39 +1,44 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React from "react";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
-    const isMenuOpen = useSelector(store=>store.app.isMenuOpen);
+  const isMenuOpen = useSelector((store) => store.app.isMenuOpen);
 
-    if(!isMenuOpen) return null;
-    
+  if (!isMenuOpen) return null;
+
   return (
-    <div className='p-4 m-2 w-56 shadow-lg rounded-lg bg-white'>
-      <ul className='mb-4'>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer font-bold'>Home</li>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>Shorts</li>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>Videos</li>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>Live</li>
-      </ul>
-      
-      <hr className='my-2 border-gray-200' />
-      
-      <h1 className='font-bold text-lg px-4 mb-2'>Subscriptions</h1>
-      <ul className='mb-4'>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>Music</li>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>Sports</li>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>Gaming</li>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>Movies</li>
+    <div
+      className="p-4 w-56 shadow-lg rounded-lg bg-white text-black min-h-screen z-50 fixed left-0 top-[76px] overflow-y-auto"
+      style={{
+        scrollbarWidth: "none", 
+        msOverflowStyle: "none", 
+      }}
+    >
+      <style>
+        {`
+          div::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
+
+      <ul className="space-y-4">
+        <li className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-gray-100 cursor-pointer">🏠 Home</li>
+        <li className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-gray-100 cursor-pointer">🔥 Trending</li>
+        <li className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-gray-100 cursor-pointer">🎵 Music</li>
+        <li className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-gray-100 cursor-pointer">🎮 Gaming</li>
+        <li className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-gray-100 cursor-pointer">📰 News</li>
+        <li className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-gray-100 cursor-pointer">🎥 Movies</li>
       </ul>
 
-      <hr className='my-2 border-gray-200' />
-
-      <h1 className='font-bold text-lg px-4 mb-2'>You</h1>
-      <ul>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>History</li>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>Playlists</li>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>Liked videos</li>
-        <li className='px-4 py-2 hover:bg-gray-100 rounded-lg cursor-pointer'>Watch later</li>
-      </ul>
+      <div className="mt-6 pt-4 border-t border-gray-200">
+        <h2 className="font-bold mb-2">Subscriptions</h2>
+        <ul className="space-y-4">
+          <li className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-gray-100 cursor-pointer">📺 Channel 1</li>
+          <li className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-gray-100 cursor-pointer">🎶 Channel 2</li>
+          <li className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-gray-100 cursor-pointer">⚽ Channel 3</li>
+        </ul>
+      </div>
     </div>
   );
 };
