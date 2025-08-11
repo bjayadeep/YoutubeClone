@@ -1,6 +1,6 @@
 import React from "react";
 
-// Dummy data for comments to test nested rendering
+// Dummy data 
 const commentsData = [
   {
     name: "Jayadeep",
@@ -36,7 +36,7 @@ const commentsData = [
     replies: [
       {
         name: "",
-        text: "Learning so much from this channel.",
+        text: "Learning so much from this page.",
         replies: [],
       },
     ],
