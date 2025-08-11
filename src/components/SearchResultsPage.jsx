@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import VideoCard from './VideoCard';
 import { YOUTUBE_SEARCH_API } from '../utils/contants';
-import { useDispatch, useSelector } from 'react-redux'; 
+import { useDispatch } from 'react-redux';
 import { closeMenu } from '../utils/appSlice';
+import { useSelector } from 'react-redux'; 
 
 const SearchResultsPage = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get("search_query");
+  const eventType = searchParams.get("event_type"); 
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -24,11 +26,17 @@ const SearchResultsPage = () => {
       setVideos([]);
       setLoading(false);
     }
-  }, [searchQuery, dispatch]);
+  }, [searchQuery, eventType, dispatch]);
 
   const getSearchResults = async () => {
     try {
-      const response = await fetch(YOUTUBE_SEARCH_API + encodeURIComponent(searchQuery));
+      let apiUrl = YOUTUBE_SEARCH_API + encodeURIComponent(searchQuery);
+
+      if (eventType) {
+        apiUrl += `&eventType=${eventType}`;
+      }
+
+      const response = await fetch(apiUrl);
       const json = await response.json();
 
       if (json.items) {
@@ -79,8 +87,8 @@ const SearchResultsPage = () => {
   }
 
   const gridColumnsClass = isMenuOpen
-    ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-    : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'; 
+    ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' // Fewer columns when sidebar is open
+    : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'; // More columns when sidebar is closed
 
   return (
     <div className={`grid ${gridColumnsClass} gap-4`}>
