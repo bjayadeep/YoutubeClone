@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleMenu } from "../utils/appSlice"; // For toggling sidebar
-import { cacheResults } from "../utils/searchSlice"; // For search suggestions caching
-import { Link, useNavigate } from "react-router-dom"; // For navigation (YouTube logo, search results)
+import { toggleMenu } from "../utils/appSlice"; 
+import { cacheResults } from "../utils/searchSlice"; 
+import { Link, useNavigate } from "react-router-dom"; 
 
 
 const YOUTUBE_SUGGESTION_API = "/api/suggestions&q=";
@@ -87,6 +87,7 @@ const Head = () => {
     <div className="flex justify-between items-center p-4 shadow-lg bg-white rounded-none fixed top-0 left-0 right-0 w-full z-[1000]">
       <div className="flex items-center">
         <img
+        className="h-8 cursor-pointer"
           onClick={toggleMenuHandler} 
           alt="menu"
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/285px-Hamburger_icon.svg.png"
