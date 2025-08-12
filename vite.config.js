@@ -14,18 +14,17 @@ export default defineConfig({
       '/api/videos': {
         target: 'https://youtube.googleapis.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/videos/, '/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&maxResults=30&regionCode=IN'),
+        rewrite: (path) => path.replace(/^\/api\/videos/, '/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics&chart=mostPopular&regionCode=IN'),
       },
       '/api/video-details': {
         target: 'https://youtube.googleapis.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/video-details/, '/youtube/v3/videos?part=snippet,statistics'),
+        rewrite: (path) => path.replace(/^\/api\/video-details/, '/youtube/v3/videos?part=snippet%2CcontentDetails%2Cstatistics'), // Added contentDetails for consistency
       },
-     
       '/api/youtube-search': {
         target: 'https://youtube.googleapis.com',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/youtube-search/, '/youtube/v3/search?part=snippet&maxResults=20'),
+        rewrite: (path) => path.replace(/^\/api\/youtube-search/, '/youtube/v3/search?part=snippet'),
       },
     },
   }

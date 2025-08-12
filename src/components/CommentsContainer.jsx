@@ -1,6 +1,5 @@
 import React from "react";
 
-// Dummy data 
 const commentsData = [
   {
     name: "Jayadeep",
@@ -49,16 +48,16 @@ const commentsData = [
 ];
 
 const Comment = ({ data }) => {
-  const { name, text } = data; 
+  const { name, text } = data;
   return (
-    <div className="flex shadow-sm bg-gray-100 p-2 rounded-2xl my-2"> 
+    <div className="flex shadow-sm bg-gray-100 p-2 rounded-2xl my-2">
       <img
-        className="w-8 h-8 rounded-full mr-3" 
+        className="w-8 h-8 rounded-full mr-3"
         alt="comment-user-icon"
-        src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png" 
+        src="https://www.iconpacks.net/icons/2/free-user-icon-3296-thumb.png"
       />
       <div className="px-3">
-        <p className="font-bold text-sm">{name}</p> 
+        <p className="font-bold text-sm">{name}</p>
         <p className="text-sm">{text}</p>
       </div>
     </div>
@@ -67,10 +66,10 @@ const Comment = ({ data }) => {
 
 const CommentsList = ({ comments }) => {
   return comments.map((comment, index) => (
-    <div key={index}> 
-      <Comment data={comment} /> 
+    <div key={index}>
+      <Comment data={comment} />
       {comment.replies && comment.replies.length > 0 && (
-        <div className="pl-5 border-l border-gray-300 ml-5"> 
+        <div className="pl-5 border-l border-gray-300 ml-5">
           <CommentsList comments={comment.replies} />
         </div>
       )}
@@ -82,8 +81,8 @@ const CommentsList = ({ comments }) => {
 const CommentsContainer = () => {
   return (
     <div className="m-5 p-2">
-      <h1 className="text-2xl font-bold mb-4">Comments:</h1> 
-      <CommentsList comments={commentsData} /> 
+      <h1 className="text-2xl font-bold mb-4">Comments:</h1>
+      <CommentsList comments={commentsData} />
     </div>
   );
 };

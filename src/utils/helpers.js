@@ -21,3 +21,15 @@ export const generateRandomMessage = () => {
     ];
     return messages[Math.floor(Math.random() * messages.length)];
 }
+
+export const formatViewCount = (views) => {
+    if (!views) return "0 views"; 
+    const numViews = parseInt(views);
+    if (numViews >= 1000000) {
+        return (numViews / 1000000).toFixed(1) + 'M views';
+    }
+    if (numViews >= 1000) {
+        return (numViews / 1000).toFixed(0) + 'K views';
+    }
+    return numViews + ' views';
+};

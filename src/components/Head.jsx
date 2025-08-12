@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleMenu } from "../utils/appSlice"; 
-import { cacheResults } from "../utils/searchSlice"; 
-import { Link, useNavigate } from "react-router-dom"; 
+import { toggleMenu } from "../utils/appSlice";
+import { cacheResults } from "../utils/searchSlice";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const YOUTUBE_SUGGESTION_API = "/api/suggestions&q=";
@@ -18,41 +18,41 @@ const Head = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-   
+
     if (searchQuery && searchCache[searchQuery]) {
       setSuggestions(searchCache[searchQuery]);
-      return; 
+      return;
     }
 
     const timer = setTimeout(() => {
       if (searchQuery) {
-        getSearchSuggestions(); 
+        getSearchSuggestions();
       } else {
-        setSuggestions([]); 
+        setSuggestions([]);
       }
     }, 200);
 
-   
+
     return () => clearTimeout(timer);
-  }, [searchQuery, searchCache]); 
+  }, [searchQuery, searchCache]);
 
   const getSearchSuggestions = async () => {
     try {
       const response = await fetch(YOUTUBE_SUGGESTION_API + encodeURIComponent(searchQuery));
-      const text = await response.text(); 
+      const text = await response.text();
 
       const match = text.match(/h\((.*)\)/s);
 
       if (match && match[1]) {
-        const jsonString = match[1]; 
+        const jsonString = match[1];
 
         try {
           const parsedArray = JSON.parse(jsonString);
 
           if (Array.isArray(parsedArray) && Array.isArray(parsedArray[1])) {
-            
+
             const extractedSuggestions = parsedArray[1].map(item => item[0]);
-            setSuggestions(extractedSuggestions); 
+            setSuggestions(extractedSuggestions);
 
             dispatch(cacheResults({ [searchQuery]: extractedSuggestions }));
 
@@ -60,7 +60,7 @@ const Head = () => {
             setSuggestions([]);
           }
         } catch (parseError) {
-          setSuggestions([]); 
+          setSuggestions([]);
           console.error("JSON parsing failed for string:", jsonString, "Error:", parseError);
         }
       } else {
@@ -68,7 +68,7 @@ const Head = () => {
         console.error("Could not extract main array content from response text using regex.", text);
       }
     } catch (error) {
-      setSuggestions([]); 
+      setSuggestions([]);
       console.error("Failed to fetch search suggestions (Network or unexpected error):", error);
     }
   };
@@ -78,7 +78,7 @@ const Head = () => {
   };
 
   const handleSearchSubmit = (queryToSearch) => {
-    setShowSuggestions(false); 
+    setShowSuggestions(false);
     setSearchQuery(queryToSearch);
     navigate(`/results?search_query=${encodeURIComponent(queryToSearch)}`);
   };
@@ -87,12 +87,12 @@ const Head = () => {
     <div className="flex justify-between items-center p-4 shadow-lg bg-white rounded-none fixed top-0 left-0 right-0 w-full z-[1000]">
       <div className="flex items-center">
         <img
-        className="h-8 cursor-pointer"
-          onClick={toggleMenuHandler} 
+          className="h-8 cursor-pointer"
+          onClick={toggleMenuHandler}
           alt="menu"
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/Hamburger_icon.svg/285px-Hamburger_icon.svg.png"
         />
-        <Link to="/"> 
+        <Link to="/">
           <img
             className="h-8 ml-4 cursor-pointer"
             alt="youtube-logo"
@@ -101,7 +101,6 @@ const Head = () => {
         </Link>
       </div>
 
-      {/* Middle*/}
       <div className="flex items-center w-1/2 relative">
         <input
           className="w-full p-2 border border-gray-400 rounded-l-full focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -109,7 +108,7 @@ const Head = () => {
           placeholder="Search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onFocus={() => setShowSuggestions(true)} 
+          onFocus={() => setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 500)}
 
           onKeyDown={(e) => {
@@ -120,7 +119,7 @@ const Head = () => {
         />
         <button
           className="border border-gray-400 p-2 rounded-r-full bg-gray-100 px-6 text-gray-700 hover:bg-gray-200"
-          onClick={() => handleSearchSubmit(searchQuery)} 
+          onClick={() => handleSearchSubmit(searchQuery)}
         >
           🔍
         </button>
@@ -131,16 +130,16 @@ const Head = () => {
             <ul className="max-h-80 overflow-y-auto">
               {suggestions.slice(0, 10).map((suggestion, index) => (
                 <li
-                  key={index} 
+                  key={index}
                   className="flex items-center p-2 hover:bg-gray-100 cursor-pointer"
                   // eslint-disable-next-line no-unused-vars
                   onClick={(e) => {
-                    
+
                     console.log("Suggestion clicked:", suggestion);
-                    handleSearchSubmit(suggestion); 
+                    handleSearchSubmit(suggestion);
                   }}
                 >
-                  <span className="mr-2">🔍</span> 
+                  <span className="mr-2">🔍</span>
                   {suggestion}
                 </li>
               ))}
